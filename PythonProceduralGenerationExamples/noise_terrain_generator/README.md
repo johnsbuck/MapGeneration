@@ -1,6 +1,6 @@
 # Noise Terrain Generator
 
-![Terrain Example](gen_terrain/terrain_gen_3.bmp)
+![Terrain Example](example_terrain.bmp)
 
 This generator uses a Perlin-based noise generator to create values per pixel that correspond 
 to a specific terrain. This is then saved as a bitmap (.bmp) with the JSON file being saved 
