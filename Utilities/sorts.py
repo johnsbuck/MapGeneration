@@ -1,3 +1,10 @@
+"""Sorts
+
+This script contains different sorts and selection algorithms for later use.
+Was mainly used for custom sorting with different comparables and practice.
+
+"""
+
 
 def mergesort(points, idx, p=None, r=None, descending=False):
     if p is None:

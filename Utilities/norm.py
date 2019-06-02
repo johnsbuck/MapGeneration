@@ -2,6 +2,7 @@
 
 Defines the norm of 2 points in N dimensional space with different norms.
 """
+
 import numpy as np
 
 

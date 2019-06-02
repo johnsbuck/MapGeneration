@@ -2,6 +2,7 @@
 
 Defines the distance of 2 points in N dimensional space with different norms.
 """
+
 import numpy as np
 
 

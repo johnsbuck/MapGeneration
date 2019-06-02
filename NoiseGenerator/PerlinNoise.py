@@ -6,8 +6,10 @@ For more information, look into the references below.
 References:
     * Patel, Amit. “Making Maps with Noise Functions.” Making Maps with Noise Functions, Red Blob Games, 2015,
       www.redblobgames.com/maps/terrain-from-noise/.
-    * Flick, Jasper. “Noise, a Unity C# Tutorial.” Noise, a Unity C# Tutorial, Catlike Coding, 2014,
+    * Flick, Jasper. “Noise, being a pseudorandom artist.” Noise, a Unity C# Tutorial, Catlike Coding, 2014,
       catlikecoding.com/unity/tutorials/noise/.
+    * Flick, Jasper. “Noise Derivatives, Going with the Flow.” Noise Derivatives, a Unity C# Tutorial,
+      Catlike Coding, 2015, catlikecoding.com/unity/tutorials/noise-derivatives/.
 """
 
 import numpy as np
@@ -17,8 +19,21 @@ from Utilities.math import *
 
 
 class PerlinNoise(INoise):
+    """Perlin Noise
+
+    Perlin Noise is a common form of noise used for procedural generation. It is the basis for many other noises
+    and is useful for the generation of various forms of terrain or natural formations.
+    """
 
     def __init__(self, seed=None):
+        """Constructor
+
+        Args:
+            seed (int): An integer used to setting the RNG for obtaining the same value or
+                will generate a new one if none is set. (Default: None)
+        """
+
+        # Hash Table used for generating Perlin Noise
         self._HASH_TABLE = [151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36,
                             103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75,
                             0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149,
@@ -35,12 +50,15 @@ class PerlinNoise(INoise):
                             50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141,
                             128, 195, 78, 66, 215, 61, 156, 180]
 
+        # Set seed if one exists
         if seed is not None and type(seed) is int:
             np.random.seed(seed)
 
+        # Generate random permutation of Hash Table for use.
         self._permutation = np.random.permutation(self._HASH_TABLE).tolist()
         self._HASH_MASK = 255
 
+        # Set Gradients for 1D, 2D, and 3D noises
         self._GRADIENTS_1D = np.array([1., -1.])
         self._GRADIENTS_MASK_1D = 1
 
@@ -75,16 +93,35 @@ class PerlinNoise(INoise):
         self._NOISE_LIST = [self.noise1d, self.noise2d, self.noise3d]
 
     def __call__(self, resolution, method, frequency, octaves, lacunarity, persistence):
+        """Call function used to generate (resolution x resolution) points of noise with the given common parameters.
+
+        Args:
+            resolution (int): Generates (resolution x resolution) noises to be given to the user.
+            method (function): A noise function (such as PerlinNoise().noise2d) that is used to generate noise.
+            frequency (float): The frequency of hills and valleys within a given range.
+            octaves (int): The number of noise samples applied to one point.
+            lacunarity (float): The factor by which the frequency changes.
+            persistence (float): The amplitude of the noise.
+
+        Returns:
+            (np.ndarray) A numpy array containing of shape (resolution, resolution).
+        """
+
+        # Coordinates of our quad that our points are generated on. Used on resolution array with linear interpolation.
+        # TODO: Might add more features (user-defined bias, different point generations)
+        #   Need to do more experimentation.
         point00 = np.array([-0.5, -0.5, 0])
         point01 = np.array([-0.5, 0.5, 0])
         point10 = np.array([0.5, -0.5, 0])
         point11 = np.array([0.5, 0.5, 0])
 
+        # Type Checking
         if resolution < 4:
             raise ValueError("Resolution must be greater than 3")
         if type(resolution) != int:
             raise ValueError("Resolution must be an integer")
 
+        # Generating points for (resolution, resolution) array.
         stepSize = 1. / resolution
         data = np.zeros((resolution, resolution))
         for y in range(resolution):
@@ -97,29 +134,88 @@ class PerlinNoise(INoise):
         return data
 
     def _get_hash(self, val):
-        return self._permutation[val % len(self._HASH_TABLE)]
+        """ Gives the hash of a given value.
+
+        Args:
+            val (int): An integer to be hashed.
+
+        Returns:
+            (int) The hash of the given integer.
+        """
+        return self._permutation[val & self._HASH_MASK]
 
     @property
     def NOISE_LIST(self):
+        """The list of possible noise functions given within the PerlinNoise class.
+
+        Returns:
+            (list) The list of possible noise functions.
+        """
         return self._NOISE_LIST
 
     @staticmethod
     def fade(t):
+        """The smoothing function used to make the noise less sharp.
+
+        In this case, our smoothing function is a 5th degree polynomial:
+        (6t^5 - 15t^4 + 10t^3)
+
+        Args:
+            t (float): A value given to smooth.
+
+        Returns:
+            (float) The smoothed value
+        """
         return (t ** 3) * (t * (t * 6 - 15) + 10)
 
     @staticmethod
     def fade_derivative(t):
+        """The first derivative of the smoothing function.
+
+        The smoothing function derivative is the following:
+        30t^4 - 60t^3 + 30t^2
+
+        Args:
+            t (float): A value given to receive the derivative of the smoothing function.
+
+        Returns:
+            The returning derivative value.
+        """
         return 30. * t * t * (t * (t - 2.) + 1.)
 
     def noise_mod(self, t):
+        """A common modifier function for noise.
+
+        Args:
+            t (float): A noise value
+
+        Returns:
+            (float) An adjusted noise value.
+        """
         return t * 0.5 + 0.5
 
     def sum(self, method, point, frequency, octaves, lacunarity, persistence):
+        """A function which sums several noise generations to receive adjusted noise.
+
+        Args:
+            method (function): A noise function (such as PerlinNoise().noise2d) that is used to generate noise.
+            point (np.ndarray): A 3D-vector to receive noise based from.
+            frequency (float): The frequency of hills and valleys within a given range.
+            octaves (int): The number of noise samples applied to one point.
+            lacunarity (float): The factor by which the frequency changes.
+            persistence (float): The amplitude of the noise.
+
+        Returns:
+            (NoiseSample) The noise for the given point based on the given parameters.
+        """
+
+        # Type Checking
+        # (Based mostly on tutorial and gives an idea of good figures. May remove in the future or change as guidelines)
         if frequency <= 0:
             raise ValueError("Frequency must be greater than 0")
 
         if octaves not in list(range(1, 17)):
-            raise ValueError("Octave must be a value from 1 to 16 (inclusive)")
+            raise ValueError("Octave must be an integer from 1 to 16 (inclusive)")
 
         if 1 > lacunarity:
             raise ValueError("Lacunarity must be greater than 1")
@@ -127,6 +223,7 @@ class PerlinNoise(INoise):
         if not (0 <= persistence <= 1):
             raise ValueError("Persistence must be a number from 0 to 1")
 
+        # Begin Summation
         sum = method(point, frequency)
         amplitude = 1.
         rng = 1.
@@ -138,6 +235,15 @@ class PerlinNoise(INoise):
         return sum * (1. / rng)
 
     def noise1d(self, point, frequency):
+        """1-Dimensional Perlin Noise
+
+        Args:
+            point (np.ndarray): 1D-vector
+            frequency (float): The frequency of hills and valleys within a given range.
+
+        Returns:
+            (NoiseSample) The noise generated based on the given point.
+        """
         point *= frequency
         i0 = int(np.floor(point[0]))
         t0 = point[0] - i0
@@ -169,6 +275,15 @@ class PerlinNoise(INoise):
         return sample * 2.
 
     def noise2d(self, point, frequency):
+        """2-Dimensional Perlin Noise
+
+        Args:
+            point (np.ndarray): 2D-vector
+            frequency (float): The frequency of hills and valleys within a given range.
+
+        Returns:
+            (NoiseSample) The noise generated based on the given point.
+        """
         point *= frequency
         ix0 = int(np.floor(point[0]))
         iy0 = int(np.floor(point[1]))
@@ -218,6 +333,15 @@ class PerlinNoise(INoise):
         return sample * float(np.sqrt(2.))
 
     def noise3d(self, point, frequency):
+        """3-Dimensional Perlin Noise
+
+        Args:
+            point (np.ndarray): 3D-vector
+            frequency (float): The frequency of hills and valleys within a given range.
+
+        Returns:
+            (NoiseSample) The noise generated based on the given point.
+        """
         point *= frequency
         ix0 = int(np.floor(point[0]))
         iy0 = int(np.floor(point[1]))
@@ -293,6 +417,10 @@ class PerlinNoise(INoise):
         sample.derivative *= frequency
         return sample
 
+
+# ------------------------------------------------
+# Test Script
+# ------------------------------------------------
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt

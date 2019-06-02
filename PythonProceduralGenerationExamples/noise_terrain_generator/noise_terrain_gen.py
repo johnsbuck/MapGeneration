@@ -1,3 +1,11 @@
+"""Noise Terrain Generator
+
+This script uses a function to generate a bitmap of Terrain with PyGame.
+You can also view the screen after generating by setting specific parameters.
+
+TODO: Add OpenCL or Vulkan Compute to speed up processing and allow quicker and larger terrain generation.
+"""
+
 import argparse
 import random
 import json
@@ -9,6 +17,16 @@ from NoiseGenerator import PerlinNoise, ValueNoise, SimplexNoise
 
 
 def get_name(main_title, folder, sep="_"):
+    """ Obtains the next valid name basd on given filename and count
+
+    Args:
+        main_title (str): Main portion to define naming scheme.
+        folder (str): Folder to be stored in. No '/' or '\' required.
+        sep (str): A separator between maint_title and count.
+
+    Returns:
+        (str) A valid filename within the given folder.
+    """
     count = 0
     if not os.path.isdir(folder):
         os.mkdir(folder)
@@ -18,6 +36,11 @@ def get_name(main_title, folder, sep="_"):
 
 
 def noise_terrain_gen(data=None):
+    """ The noise generator that uses a given data dictionary to create a bitmap of terrain.
+
+    Args:
+        data (dict): A structured dictionary used for all parameters.
+    """
     if data is None:
         # ------------------------------------------------
         # Define Default Parameters
@@ -172,6 +195,10 @@ def noise_terrain_gen(data=None):
 
     print("FINISHED SAVING")
 
+
+# ------------------------------------------------
+# Main Script
+# ------------------------------------------------
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Perlin noise_terrain_generator Parameter Parser")
