@@ -3,7 +3,7 @@
 This script uses a function to generate a bitmap of Terrain with PyGame.
 You can also view the screen after generating by setting specific parameters.
 
-TODO: Add OpenCL or Vulkan Compute to speed up processing and allow quicker and larger terrain generation.
+TODO: Add OpenGL or Vulkan to speed up processing and allow quicker and larger terrain generation.
 """
 
 import argparse

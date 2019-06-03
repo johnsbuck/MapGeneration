@@ -10,6 +10,8 @@ References:
       catlikecoding.com/unity/tutorials/noise/.
     * Flick, Jasper. “Noise Derivatives, Going with the Flow.” Noise Derivatives, a Unity C# Tutorial,
       Catlike Coding, 2015, catlikecoding.com/unity/tutorials/noise-derivatives/.
+
+TODO: Add OpenCL or Vulkan Compute to speed up processing and allow quicker and larger terrain generation.
 """
 
 import numpy as np
