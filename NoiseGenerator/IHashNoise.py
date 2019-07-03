@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class INoise(metaclass=ABCMeta):
+class IHashNoise(metaclass=ABCMeta):
 
     def __init__(self):
         raise NotImplementedError("This object is an interface that has no implementation.")

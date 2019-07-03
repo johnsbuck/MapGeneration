@@ -16,11 +16,11 @@ References:
 
 import numpy as np
 from NoiseGenerator.NoiseSample import NoiseSample
-from NoiseGenerator.INoise import INoise
+from NoiseGenerator.IHashNoise import IHashNoise
 from Utilities.math import *
 
 
-class ValueNoise(INoise):
+class ValueNoise(IHashNoise):
     """Value Noise
 
     A basic form of Perlin-based noise used for procedural generation.
@@ -169,20 +169,21 @@ class ValueNoise(INoise):
         if octaves not in list(range(1, 17)):
             raise ValueError("Octave must be a value from 1 to 16 (inclusive)")
 
-        if not (1 <= lacunarity <= 4):
-            raise ValueError("Lacunarity must be a number from 1 to 4")
+        if lacunarity <= 0:
+            raise ValueError("Lacunarity must be greater than 0")
 
         if not (0 <= persistence <= 1):
             raise ValueError("Persistence must be a number from 0 to 1")
 
-        sum = method(point, frequency)
+        # Begin Summation
+        sum = NoiseSample(0.)
         amplitude = 1.
-        rng = 1.
-        for o in range(1, octaves):
+        rng = 0.
+        for o in range(octaves):
+            sum += method(point, frequency) * amplitude
+            rng += amplitude
             frequency *= lacunarity
             amplitude *= persistence
-            rng += amplitude
-            sum += method(point, frequency) * amplitude
         return sum * (1. / rng)
 
     def noise1d(self, point, frequency):
@@ -335,7 +336,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     v_noise = ValueNoise()
-    resolution = 80
+    resolution = 512
     step_size = 1. / resolution
 
     data = np.zeros((resolution, resolution))
@@ -349,6 +350,6 @@ if __name__ == "__main__":
         point1 = lerp((y + 0.5) * step_size, point10, point11)
         for x in range(resolution):
             point = lerp((x + 0.5) * step_size, point0, point1)
-            data[x, y] = v_noise.noise2d(point, 4).value
+            data[x, y] = v_noise.sum(v_noise.noise2d, point, 4, 5, 1, 0.3).value
     plt.imshow(data, cmap="binary")
     plt.show()

@@ -16,11 +16,11 @@ TODO: Add OpenCL or Vulkan Compute to speed up processing and allow quicker and 
 
 import numpy as np
 from NoiseGenerator.NoiseSample import NoiseSample
-from NoiseGenerator.INoise import INoise
+from NoiseGenerator.IHashNoise import IHashNoise
 from Utilities.math import *
 
 
-class PerlinNoise(INoise):
+class PerlinNoise(IHashNoise):
     """Perlin Noise
 
     Perlin Noise is a common form of noise used for procedural generation. It is the basis for many other noises
@@ -219,21 +219,21 @@ class PerlinNoise(INoise):
         if octaves not in list(range(1, 17)):
             raise ValueError("Octave must be an integer from 1 to 16 (inclusive)")
 
-        if 1 > lacunarity:
-            raise ValueError("Lacunarity must be greater than 1")
+        if lacunarity <= 0:
+            raise ValueError("Lacunarity must be greater than 0")
 
         if not (0 <= persistence <= 1):
             raise ValueError("Persistence must be a number from 0 to 1")
 
         # Begin Summation
-        sum = method(point, frequency)
+        sum = NoiseSample(0.)
         amplitude = 1.
-        rng = 1.
+        rng = 0.
         for o in range(octaves):
+            sum += method(point, frequency) * amplitude
+            rng += amplitude
             frequency *= lacunarity
             amplitude *= persistence
-            rng += amplitude
-            sum += method(point, frequency) * amplitude
         return sum * (1. / rng)
 
     def noise1d(self, point, frequency):
@@ -437,13 +437,15 @@ if __name__ == "__main__":
 
     resolution = 512
     stepSize = 1. / resolution
-    data = np.zeros((resolution, resolution, 3))
+    data = np.zeros((resolution, resolution))
     for y in range(resolution):
         point0 = lerp((y + 0.5) * stepSize, point00, point01)
         point1 = lerp((y + 0.5) * stepSize, point10, point11)
         for x in range(resolution):
             point = lerp((x + 0.5) * stepSize, point0, point1)
-            t = perlin.sum(perlin.noise2d, point, 16, 1, 3, 0.0).value
-            data[x, y] = np.array([1, 1, 1]) * t * 0.5 + 0.5
-    plt.imshow(data)
+            t = perlin.sum(perlin.noise2d, point, 2, 5, 1., 0.5).value
+            data[x, y] = t * 0.5 + 0.5
+    print(data.min(), data.max(), data.mean())
+
+    plt.imshow(data, cmap="gray")
     plt.show()
