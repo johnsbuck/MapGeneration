@@ -47,28 +47,28 @@ def noise_terrain_gen(data=None):
         # ------------------------------------------------
 
         # Define Land Colors
-        default_land_colors = [(0.15, [20, 75, 190]),  # Deep Ocean
-                               (0.32, [29, 100, 210]),  # Ocean
-                               (0.52, [38, 110, 225]),  # Shallow
-                               (0.60, [47, 128, 235]),  # Coast
-                               (0.64, [254, 251, 192]),  # Beach
-                               (0.78, [60, 204, 62]),  # Grass
-                               (0.88, [80, 114, 16]),  # Forest
-                               (0.95, [91, 46, 39]),  # Mountain
-                               (0.98, [180, 92, 80]),  # Snowy Mountain
-                               (1.00, [255, 255, 255])  # Snow
+        default_land_colors = [(0.15, [20, 75, 190]),       # Deep Ocean
+                               (0.32, [29, 100, 210]),      # Ocean
+                               (0.52, [38, 110, 225]),      # Shallow
+                               (0.60, [47, 128, 235]),      # Coast
+                               (0.64, [254, 251, 192]),     # Beach
+                               (0.78, [60, 204, 62]),       # Grass
+                               (0.88, [80, 114, 16]),       # Forest
+                               (0.95, [91, 46, 39]),        # Mountain
+                               (0.98, [180, 92, 80]),       # Snowy Mountain
+                               (1.00, [255, 255, 255])      # Snow
                                ]
 
         # Define Cloud Colors (w/ Alpha)
         # Kept commented colors for more detailed cloud coloring example
         default_cloud_colors = [(0.65, [255, 255, 255, 0]),     # No Clouds
-                                # (0.70, [255, 255, 255, 30]),
+                                (0.70, [255, 255, 255, 30]),
                                 (0.75, [255, 255, 255, 60]),
-                                # (0.80, [255, 255, 255, 90]),
+                                (0.80, [255, 255, 255, 90]),
                                 (0.85, [255, 255, 255, 120]),
-                                # (0.90, [255, 255, 255, 150]),
-                                (1.00, [255, 255, 255, 180]),   # originally 0.95
-                                # (1.00, [255, 255, 255, 210]), # Maximum Clouds
+                                (0.90, [255, 255, 255, 150]),
+                                (0.95, [255, 255, 255, 180]),
+                                (1.00, [255, 255, 255, 210]),   # Maximum Clouds
                                 ]
 
         # Define Default Parameter Dictionary
@@ -97,8 +97,8 @@ def noise_terrain_gen(data=None):
                     "dim": 2
                 },
             },
-            "resolution": 256,
-            "scale": 2,
+            "resolution": 1024,
+            "scale": 1,
             "folder": "gen_terrain",
             "name": get_name("terrain_gen", "gen_terrain"),
             "pygame_wait": 0,

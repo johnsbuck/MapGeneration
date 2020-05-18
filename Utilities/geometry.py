@@ -4,6 +4,7 @@ Used for obtaining specifics on given polygons or lines
 """
 
 from sys import float_info
+from Utilities.metric import *
 
 
 def centroid(points):
@@ -16,6 +17,10 @@ def centroid(points):
         (list) A 2D-Vector that is the centroid for the polygon.
     """
     return [sum(points[:, 0]) / len(points), sum(points[:, 1]) / len(points)]
+
+
+def is_between(a, b, c, dist=euclidean):
+    return abs(dist(a, c) + dist(c, b) - dist(a, b)) < float_info.epsilon
 
 
 def line_intersection(p, q, r, s):

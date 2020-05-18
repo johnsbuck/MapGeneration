@@ -3,6 +3,8 @@
 This script contains functions commonly used for mathematical functions between vectors.
 """
 
+import numpy as np
+
 
 def lerp(t, a, b):
     """Linear Interpolation function
@@ -33,3 +35,7 @@ def dot(g, x, y, z=None):
     if z is None:
         return g[0] * x + g[1] * y
     return g[0] * x + g[1] * y + g[2] * z
+
+
+def fract(value):
+    return value - np.floor(value)

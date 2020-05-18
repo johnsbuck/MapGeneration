@@ -15,6 +15,7 @@ TODO: Add OpenCL or Vulkan Compute to speed up processing and allow quicker and 
 """
 
 import numpy as np
+from concurrent import futures
 from NoiseGenerator.NoiseSample import NoiseSample
 from NoiseGenerator.IHashNoise import IHashNoise
 from Utilities.math import *
@@ -124,8 +125,9 @@ class PerlinNoise(IHashNoise):
             raise ValueError("Resolution must be an integer")
 
         # Generating points for (resolution, resolution) array.
-        stepSize = 1. / resolution
         data = np.zeros((resolution, resolution))
+        stepSize = 1. / resolution
+
         for y in range(resolution):
             point0 = lerp((y + 0.5) * stepSize, point00, point01)
             point1 = lerp((y + 0.5) * stepSize, point10, point11)

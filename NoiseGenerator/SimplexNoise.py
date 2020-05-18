@@ -337,7 +337,7 @@ if __name__ == "__main__":
         point1 = lerp((y + 0.5) * step_size, point10, point11)
         for x in range(resolution):
             point = lerp((x + 0.5) * step_size, point0, point1)
-            data[x, y] = simplex.modify_out(simplex.sum(simplex.noise2d, point, 4, 5, 1, 0.3).value)
+            data[x, y] = simplex.modify_out(simplex.sum(simplex.noise2d, point, 2, 5, 1, 0.3).value)
     print(data.min(), data.max())
     plt.imshow(data, cmap="binary")
     plt.show()
