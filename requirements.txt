@@ -4,7 +4,7 @@ cycler==0.10.0
 idna==2.8
 kiwisolver==1.0.1
 matplotlib==3.0.3
-numpy==1.16.2
+numpy>=1.21
 Pillow>=7.1.0
 pygame==1.9.6
 pyparsing==2.4.0
