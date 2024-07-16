@@ -101,7 +101,7 @@ def noise_terrain_gen(data=None):
             "scale": 2,
             "folder": "gen_terrain",
             "name": get_name("terrain_gen", "gen_terrain"),
-            "pygame_wait": 0,
+            "pygame_wait": 10000,
         }
 
     # ------------------------------------------------

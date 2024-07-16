@@ -21,7 +21,7 @@ class PoissonDiscSampleGenerator(object):
 
     """
 
-    def __init__(self, radius=5, k=30, extent=[100, 100], seed=None):
+    def __init__(self, radius=5, k=30, extent=[125, 125], seed=None):
         """ PoissonDiscSampleGenerator Constructor
 
         Initializes the Poisson Disc Sample Generator.
@@ -288,7 +288,9 @@ class PoissonDiscSampleGenerator(object):
         # --------------------------------
         for _ in range(self._k):
             # Defines radial distance from active_point.
-            rho = np.random.uniform(self._radius, 2 * self._radius)
+            # rho = np.random.uniform(self._radius, 2 * self._radius)
+            # Changed to sqrt of random to create uniform chance of point in circle
+            rho = np.sqrt(np.random.random()) * self._radius + self._radius
             # Defines angle from active_point. Requires multiple angles for higher dimensional planes.
             theta = [np.random.uniform(0, 2 * np.pi) for _ in range(self._dim - 1)]
 
@@ -408,3 +410,19 @@ class PoissonDiscSampleGenerator(object):
 
         # Return all possible neighbor distances
         return np.array(distances, dtype=int)
+
+
+def main():
+    from scipy.spatial import Delaunay
+    import matplotlib.pyplot as plt
+
+    points = PoissonDiscSampleGenerator().generate()
+
+    tri = Delaunay(points)
+    plt.triplot(points[:, 0], points[:, 1], tri.simplices)
+    plt.plot(points[:, 0], points[:, 1], 'o')
+    plt.show()
+
+
+if __name__ == "__main__":
+    main()

@@ -335,7 +335,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     v_noise = ValueNoise()
-    resolution = 80
+    resolution = 512
     step_size = 1. / resolution
 
     data = np.zeros((resolution, resolution))

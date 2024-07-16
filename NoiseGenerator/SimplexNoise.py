@@ -323,7 +323,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     simplex = SimplexNoise()
-    resolution = 80
+    resolution = 512
     step_size = 1. / resolution
 
     data = np.zeros((resolution, resolution))
